@@ -171,7 +171,7 @@ qqline(A)
 ## Exercises  {.unnumbered .smaller}
 
 ```{r}
-source('Cleaning.R') #Open Cleaning.R for information about variables.
+source('cleaning_active.R') #Open Cleaning.R for information about variables.
 head(activeLong)
 ```
 
@@ -180,11 +180,11 @@ head(activeLong)
 
 
 ```{r}
-activeLong <- activeLong %>% mutate(INTGRP = relevel(INTGRP, ref='Control'))
+activeLong <- activeLong %>% mutate(INTGRP = relevel(INTGRP, ref='Control')) #reference group
 
 library(lme4)
 library(tidyr)
-mod1 <- activeLong %>% drop_na(Memory, Years, INTGRP) %>% 
+mod1 <- activeLong %>% drop_na(Memory, Years, INTGRP) %>% #drop missing value from these three values, not automatically done the packages
   lmer(Memory ~ Years*I(Years > 3)*INTGRP + (1|AID), data = ., REML = FALSE)
 
 mod1 %>% summary()
