@@ -39,7 +39,7 @@ Add the citations of these papers to the `Library.bib` file in the Github Repo b
 
 2. Write a 5-10 sentence summary about this study and its study design. Cite the articles appropriately in this reflection using the following syntax `[@key]` (adjust `key` according to what you put in the `.bib` file). For example, I could write about misspecification of the covariance matrix in mixture models and refer to my paper [@heggeseth_impact_2013]. 
 
-ANSWER:The ACTIVE study examined whether cognitive training could help older adults maintain cognitive health and functional independence. Participants were randomly assigned to memory training, reasoning training, speed-of-processing training, or a no-contact control group in a single-blind trial. The study initially enrolled 2,832 adults aged 65 and older who lived in the community and did not have significant cognitive dysfunction [@tennstedt2013active]. The follow-up ten-year assessments included cognitive tests, participants’ reports of difficulties with daily activities, and performance-based measures of everyday functioning. At ten years, all three training groups resulted in less decline in performance of instrumental activities of daily living than the control group. Reasoning and speed training, but not memory training, led to lasting improvements in the targeted cognitive abilities over ten years [@rebok2014ten].
+ANSWER:The ACTIVE study examined whether cognitive training could help older adults maintain cognitive health and functional independence. Participants were randomly assigned to memory training, reasoning training, speed-of-processing training, or a no-contact control group in a single-blind trial. The study initially enrolled 2,832 adults aged 65 and older who lived in the community and did not have significant cognitive dysfunction [@tennstedt2013active]. The assessments over ten years included cognitive tests, participants’ reports of difficulties with daily activities, and performance-based measures of everyday functioning. At ten years, participants in all three training groups reported less decline in their ability to perform instrumental activities of daily living than those in the control group. Reasoning and speed training, but not memory training, led to lasting improvements in the targeted cognitive abilities over ten years [@rebok2014ten].
 
 
 ## Research Question {-}
@@ -100,6 +100,9 @@ memory_data %>%
 ANSWER:
 
 ```{r}
+memory_data <- memory_data %>%
+  mutate(INTGRP = relevel(INTGRP, ref = "Control"))
+
 model1 <- lm(Memory ~ Years + INTGRP, data = memory_data)
 
 model2 <- lm(Memory ~ factor(Years) + INTGRP, data = memory_data)
