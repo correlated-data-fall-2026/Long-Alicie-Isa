@@ -39,7 +39,7 @@ Add the citations of these papers to the `Library.bib` file in the Github Repo b
 
 2. Write a 5-10 sentence summary about this study and its study design. Cite the articles appropriately in this reflection using the following syntax `[@key]` (adjust `key` according to what you put in the `.bib` file). For example, I could write about misspecification of the covariance matrix in mixture models and refer to my paper [@heggeseth_impact_2013]. 
 
-ANSWER:
+ANSWER:The ACTIVE study examined whether cognitive training could help older adults maintain cognitive health and functional independence. Participants were randomly assigned to memory training, reasoning training, speed-of-processing training, or a no-contact control group in a single-blind trial. The study initially enrolled 2,832 adults aged 65 and older who lived in the community and did not have significant cognitive dysfunction [@tennstedt2013active]. The assessments over ten years included cognitive tests, participants’ reports of difficulties with daily activities, and performance-based measures of everyday functioning. At ten years, participants in all three training groups reported less decline in their ability to perform instrumental activities of daily living than those in the control group. Reasoning and speed training, but not memory training, led to lasting improvements in the targeted cognitive abilities over ten years [@rebok2014ten].
 
 
 ## Research Question {-}
@@ -50,7 +50,7 @@ Outcome Ideas (choose 1): Reasoning, Memory, Speed of Processing, Functional Out
 
 Predictors: Treatment Group, Years, Baseline Age, Gender, Baseline Values [of any outcome], Interactions, Reasoning, Memory, Speed of Processing, Functional Outcomes
 
-ANSWER:
+ANSWER:Does memory performance change differently over time for people in the memory training group compared with those in the control group?
 
 
 4. Load in the ACTIVE study data and come up with two high quality graphs that provide insight about your research question. 
@@ -58,12 +58,39 @@ ANSWER:
 ANSWER:
 
 ```{r}
-source('Cleaning.R') # Open Cleaning.R to see the data cleaning steps to create a long format dataset & more info about each variable
+source('cleaning_active.R') # Open Cleaning.R to see the data cleaning steps to create a long format dataset & more info about each variable
 head(activeLong)
 ```
 
 ```{r}
+memory_data <- activeLong %>%
+  filter(INTGRP %in% c("Memory Training", "Control"))
 
+memory_data %>%
+  ggplot(aes(x = Years, y = Memory, color = INTGRP, group = AID)) +
+  geom_line(alpha = 0.3) +
+  facet_wrap(~ INTGRP) +
+  labs(
+    title = "Individual Memory Scores Over Time",
+    x = "Follow Up Year",
+    y = "Memory Score",
+    color = "Treatment Group"
+  ) +
+  theme_classic()
+
+memory_data %>%
+  group_by(INTGRP, Years) %>%
+  summarize(Memory = mean(Memory, na.rm = TRUE)) %>%
+  ggplot(aes(x = Years, y = Memory, color = INTGRP)) +
+  geom_point() +
+  geom_line() +
+  labs(
+    title = "Average Memory Scores Over Time",
+    x = "Follow Up Year",
+    y = "Average Memory Score",
+    color = "Treatment Group"
+  ) +
+  theme_classic()
 ```
 
 ## Models {-}
@@ -73,8 +100,16 @@ head(activeLong)
 ANSWER:
 
 ```{r}
+memory_data <- memory_data %>%
+  mutate(INTGRP = relevel(INTGRP, ref = "Control"))
 
+model1 <- lm(Memory ~ Years + INTGRP, data = memory_data)
 
+model2 <- lm(Memory ~ factor(Years) + INTGRP, data = memory_data)
+
+model3 <- lm(Memory ~ factor(Years) * INTGRP, data = memory_data)
+
+summary(model3)
 ```
 
 
@@ -83,8 +118,15 @@ ANSWER:
 6. Write about 500 words of what you learn from fitting those models. Make sure you interpret the coefficients accurately and in context. 
 
 
-ANSWER:
+ANSWER:The individual memory score graph has many overlapping lines, making it hard to see differences between groups or the overall pattern over time. However, the average memory scores show changes over time that do not follow a straight-line pattern. Both groups reach their highest observed averages around year 3 and have lower scores at years 5 and 10. The memory training group has higher average scores throughout years, although the size of the difference changes. These patterns led me to treat follow-up year as a categorical predictor and include an interaction between year and treatment group. Since the graph shows that the gap between the two groups changes over time, including an interaction allows the model to reflect this pattern rather than assuming the same difference in average memory scores at every follow-up time.
 
+In this model, the control group is the reference group, and year 0 represents baseline. The intercept is 79.57, which means that the estimated average memory score for the control group at baseline is 79.57. The coefficient for the memory training group is 1.445, meaning that its estimated average memory score at baseline is 1.44 points higher than the control group’s. Adding these two values gives an estimated baseline average of 81.01 for the memory training group. This difference does not represent the effect of training because baseline scores were measured before the training intervention.
+
+For the control group, each year coefficient shows how much the estimated average memory score differs from baseline. The coefficient for year 2 is 2.21, meaning that the average score is 2.21 points higher than at baseline. Adding this to the baseline average of 79.57 gives an estimated average of 81.78 at year 2. At year 3, the average is 3.58 points higher than at baseline. By years 5 and 10, however, it is respectively 4.05 and 6.66 points lower than at baseline. This shows that there's an increase in memory scores at years 2 and 3, but declines below baseline at years 5 and 10 without training.
+
+For the memory training group, the interaction coefficients show how its change from baseline differs from the control group’s change. The interaction coefficient for year 2 is 3.04, meaning that the increase from baseline is 3.04 points greater than in the control group. Adding this to the control group’s increase of 2.21 gives an estimated increase of 5.25 points for the memory training group. At year 5, the interaction coefficient is 3.27, meaning that the decline from baseline is 3.27 points smaller than in the control group. However, by year 10, the interaction coefficient is only 0.13, suggesting that the two groups have similar declines from their own baseline averages and that the difference in their changes has become smaller.
+
+The model explains about 4.2% of the variation in memory scores, so a high proportion of the variation is still unexplained. Also, 3,260 observations were removed because of missing values, meaning that the averages at different follow-up times may not represent exactly the same participants. Although some interaction terms have p-values below 0.05, these values only assume independent errors. Since each participant was measured repeatedly, we cannot rely on these p-values to conclude that the changes differ significantly between the two groups. Overall, the estimates suggest that the memory training group had greater early improvements, but by year 10, the two groups had similar changes from their own baseline averages.
 
 
 ## References {-}
