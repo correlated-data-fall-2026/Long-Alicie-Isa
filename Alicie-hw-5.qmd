@@ -39,7 +39,7 @@ Add the citations of these papers to the `Library.bib` file in the Github Repo b
 
 2. Write a 5-10 sentence summary about this study and its study design. Cite the articles appropriately in this reflection using the following syntax `[@key]` (adjust `key` according to what you put in the `.bib` file). For example, I could write about misspecification of the covariance matrix in mixture models and refer to my paper [@heggeseth_impact_2013]. 
 
-ANSWER:
+ANSWER:The ACTIVE study examined whether cognitive training could help older adults maintain cognitive health and functional independence. Participants were randomly assigned to memory training, reasoning training, speed-of-processing training, or a no-contact control group in a single-blind trial. The study initially enrolled 2,832 adults aged 65 and older who lived in the community and did not have significant cognitive dysfunction [@tennstedt2013active]. The follow-up ten-year assessments included cognitive tests, participants’ reports of difficulties with daily activities, and performance-based measures of everyday functioning. At ten years, all three training groups resulted in less decline in performance of instrumental activities of daily living than the control group. Reasoning and speed training, but not memory training, led to lasting improvements in the targeted cognitive abilities over ten years [@rebok2014ten].
 
 
 ## Research Question {-}
@@ -50,7 +50,7 @@ Outcome Ideas (choose 1): Reasoning, Memory, Speed of Processing, Functional Out
 
 Predictors: Treatment Group, Years, Baseline Age, Gender, Baseline Values [of any outcome], Interactions, Reasoning, Memory, Speed of Processing, Functional Outcomes
 
-ANSWER:
+ANSWER:Does memory performance change differently over time for people in the memory training group compared with those in the control group?
 
 
 4. Load in the ACTIVE study data and come up with two high quality graphs that provide insight about your research question. 
@@ -58,12 +58,39 @@ ANSWER:
 ANSWER:
 
 ```{r}
-source('Cleaning.R') # Open Cleaning.R to see the data cleaning steps to create a long format dataset & more info about each variable
+source('cleaning_active.R') # Open Cleaning.R to see the data cleaning steps to create a long format dataset & more info about each variable
 head(activeLong)
 ```
 
 ```{r}
+memory_data <- activeLong %>%
+  filter(INTGRP %in% c("Memory Training", "Control"))
 
+memory_data %>%
+  ggplot(aes(x = Years, y = Memory, color = INTGRP, group = AID)) +
+  geom_line(alpha = 0.3) +
+  facet_wrap(~ INTGRP) +
+  labs(
+    title = "Individual Memory Scores Over Time",
+    x = "Follow Up Year",
+    y = "Memory Score",
+    color = "Treatment Group"
+  ) +
+  theme_classic()
+
+memory_data %>%
+  group_by(INTGRP, Years) %>%
+  summarize(Memory = mean(Memory, na.rm = TRUE)) %>%
+  ggplot(aes(x = Years, y = Memory, color = INTGRP)) +
+  geom_point() +
+  geom_line() +
+  labs(
+    title = "Average Memory Scores Over Time",
+    x = "Follow Up Year",
+    y = "Average Memory Score",
+    color = "Treatment Group"
+  ) +
+  theme_classic()
 ```
 
 ## Models {-}
@@ -73,8 +100,13 @@ head(activeLong)
 ANSWER:
 
 ```{r}
+model1 <- lm(Memory ~ Years + INTGRP, data = memory_data)
 
+model2 <- lm(Memory ~ factor(Years) + INTGRP, data = memory_data)
 
+model3 <- lm(Memory ~ factor(Years) * INTGRP, data = memory_data)
+
+summary(model3)
 ```
 
 
