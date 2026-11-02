@@ -89,7 +89,7 @@ memory_data <- memory_data %>%
 
 ANSWER:
 
-- Model 1:
+- Model 1:The first model uses an independence working correlation structure, which assumes that memory scores from different measurements of the same participant are uncorrelated. Although this assumption may not hold, we can use it to compare with the second model. We will use robust standard errors to account for within-participant correlation even if this working correlation assumption is wrong.
 
 ```{r}
 gee_mod1 <- memory_data %>%
@@ -98,7 +98,7 @@ gee_mod1 <- memory_data %>%
 summary(gee_mod1)
 ```
 
-- Model 2:
+- Model 2:We chose exchangeable as the working correlation structure for the second model. Although we haven't covered it in class, we think it is worth considering because memory scores from the same participant may be correlated. This structure assumes the same correlation between any two measurements from the same participant, no matter how far apart the measurements are.
 
 ```{r}
 gee_mod2 <- memory_data %>%
