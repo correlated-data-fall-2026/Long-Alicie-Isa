@@ -25,7 +25,7 @@ For this assignment, I want you to work together with a partner.
 
 
 
-ANSWER: 
+ANSWER: After accounting for baseline age, do memory scores change differently over time between the memory training group and the control group?
 
 
 2. Based on your previous work with this data set, including your literature search, come up with a mean model (x's and their functional format) that addresses your research question (accounting for potential confounders).
@@ -34,6 +34,17 @@ ANSWER:
 
 ANSWER (In R formula structure): 
 
+```{r}
+library(tidyverse)
+
+source("cleaning_active.R")
+
+memory_data <- activeLong %>%
+  filter(INTGRP %in% c("Memory Training", "Control")) %>%
+  mutate(INTGRP = relevel(INTGRP, ref = "Control"))
+
+Memory ~ factor(Years) * INTGRP + AgeAtBaseline
+```
 
 ## Longitudinal Models {-}
 
