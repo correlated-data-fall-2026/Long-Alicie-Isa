@@ -41,6 +41,7 @@ source("cleaning_active.R")
 
 memory_data <- activeLong %>%
   filter(INTGRP %in% c("Memory Training", "Control")) %>%
+  droplevels() %>%
   mutate(INTGRP = relevel(INTGRP, ref = "Control"))
 
 Memory ~ factor(Years) * INTGRP + AgeAtBaseline
@@ -76,9 +77,14 @@ BEFORE YOU BEGIN: Decide whether you and your partner want to use Mixed Effects 
 - Mixed Effects: start with random intercept and consider which coef could be random, describe them in words, and then fit them with `lme4::lmer()`. 
 
 ```{r}
-source('cleaning_active.R') # Open Cleaning.R to see the data cleaning steps to create a long format dataset
+#source('cleaning_active.R') # Open Cleaning.R to see the data cleaning steps to create a long format dataset
 library(geeM)
-library(lme4)
+#library(lme4)
+library(tidyr)
+
+memory_data <- memory_data %>%
+  drop_na(Memory, Years, INTGRP, AgeAtBaseline) %>%
+  arrange(AID, Years)
 ```
 
 ANSWER:
@@ -86,7 +92,10 @@ ANSWER:
 - Model 1:
 
 ```{r}
+gee_mod1 <- memory_data %>%
+  geem(Memory ~ factor(Years) * INTGRP + AgeAtBaseline, data = ., id = AID, corstr = "independence") 
 
+summary(gee_mod1)
 ```
 
 - Model 2:
