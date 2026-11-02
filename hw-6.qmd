@@ -113,7 +113,7 @@ summary(gee_mod2)
 
 ANSWER:
 
--
+-Both models show that participants who were older at baseline had lower average memory scores. The baseline age coefficient ranges from about −1.1 to −1.2 across the two models, meaning that each additional year of baseline age is associated with a 1.1- to 1.2-point lower average memory score, when holding treatment group and follow-up year constant.
 -
 -
 
