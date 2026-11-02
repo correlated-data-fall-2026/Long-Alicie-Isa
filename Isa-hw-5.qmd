@@ -1,0 +1,139 @@
+---
+title: "Homework 5 "
+subtitle: "Stat 452"
+author: "Isa Chen"
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    embed-resources: true
+bibliography: Library.bib
+---
+
+
+```{r include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, error=TRUE, message=FALSE, warning=FALSE)
+library(tidyverse)
+```
+
+
+For this assignment, I want you to work on your own in your own file, generating ideas by yourself so that when you work with your partner, you'll have twice the number of ideas.
+
+
+
+
+## Data Context {-}
+
+1. Read the following two journal articles about the ACTIVE study.
+
+- <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3934012/>
+- <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4055506/>
+
+Add the citations of these papers to the `Library.bib` file in the Github Repo by going to <https://www.scholar.google.com> and typing the article title. Find the article by double checking authors and titles. Click on Cite and then Bibtex and copy the \@Article{key, ...} text below into the `Library.bib` file. 
+
+
+
+
+
+
+
+2. Write a 5-10 sentence summary about this study and its study design. Cite the articles appropriately in this reflection using the following syntax `[@key]` (adjust `key` according to what you put in the `.bib` file). For example, I could write about misspecification of the covariance matrix in mixture models and refer to my paper [@heggeseth_impact_2013]. 
+
+ANSWER: The ACTIVE study was designed to test whether cognitive training could help elders keep their thinking skills and stay independent in daily life [@tennstedt2013active]. About 2800 adults aged 65 and older were randomly assigned to one of four groups: memory training, reasoning training, speed of processing training, or a no-contact control group. Each training group had ten sessions over five to six weeks. Some people also got extra booster sessions about one and three years later. The testers did not know which group each person was in. Everyone was tested at the start, right after training, and several more times over ten years [@rebok2014ten]. So each person has many scores over time, and these scores are likely related. After ten years, the reasoning and speed groups still did better than the control group on the skills they practiced. The memory group did not. All three training groups also had less trouble with daily tasks than the control group [@rebok2014ten].
+
+
+## Research Question {-}
+
+3. Develop a "linear regression" research question you'd like to explore about aging related to the clinical trial.
+
+Outcome Ideas (choose 1): Reasoning, Memory, Speed of Processing, Functional Outcomes
+
+Predictors: Treatment Group, Years, Baseline Age, Gender, Baseline Values [of any outcome], Interactions, Reasoning, Memory, Speed of Processing, Functional Outcomes
+
+ANSWER: Does reasoning training slow down the drop in reasoning scores over time, after accounting for age and gender?
+- Outcome: Reasoning score
+- Main predictors: Treatment group, Years since baseline, and their interaction (Years × Treatment)
+- Other predictors: Age, Gender
+
+4. Load in the ACTIVE study data and come up with two high quality graphs that provide insight about your research question. 
+
+ANSWER:
+Graph 1 shows that people vary a lot in their reasoning scores, and this is much bigger than the change over time.
+
+Graph 2 shows that people 75 and older score lower. The reasoning group is highest, but its line is flat while the control and memory groups go up, so the gap gets smaller over time. 
+
+```{r}
+source('cleaning_active.R') # Open Cleaning.R to see the data cleaning steps to create a long format dataset & more info about each variable
+head(activeLong)
+```
+
+```{r}
+activeLong %>%
+  ggplot(aes(x = Years, y = Reasoning, group = AID)) +
+  geom_line(alpha = 0.1) +
+  geom_smooth(aes(group = NULL), method = "lm", se = FALSE) +
+  facet_wrap(~ INTGRP) +
+  theme_classic()
+
+activeLong %>%
+  mutate(AgeGroup = ifelse(AgeAtBaseline >= 75, "75 and older", "Under 75")) %>%
+  ggplot(aes(x = Years, y = Reasoning, color = INTGRP)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  facet_wrap(~ AgeGroup) +
+  theme_classic()
+```
+
+## Models {-}
+
+5. Use those graphs to inform fitting a series of linear models (using `lm`) predicting the outcome of your choice (as it relates to your research question). Make sure to consider interactions (whether the effect is the same within treatment groups). Provide code and output for one model that you feel is informative about your research question. 
+
+ANSWER: Graph 2 showed that the groups change at different rates and that older people score lower. So I fit three models. Model 1 has Years and treatment group. Model 2 adds a Years × treatment group interaction. Model 3 also adds baseline age and gender. I show Model 3 because it includes all the important variables. The control group is the reference group.
+
+```{r}
+activeLong <- activeLong %>%
+  mutate(INTGRP = relevel(INTGRP, ref = "Control"))
+
+mod1 <- lm(Reasoning ~ Years + INTGRP, data = activeLong)
+mod2 <- lm(Reasoning ~ Years * INTGRP, data = activeLong)
+mod3 <- lm(Reasoning ~ Years * INTGRP + AgeAtBaseline + factor(GENDER), data = activeLong)
+
+summary(mod3)
+
+```
+
+
+
+
+6. Write about 500 words of what you learn from fitting those models. Make sure you interpret the coefficients accurately and in context. 
+
+
+ANSWER:
+
+I focus on Model 3, which includes Years, treatment group, their interaction, baseline age, and gender. The control group is the reference group.
+
+The intercept is 82.1. This is the predicted reasoning score for a man in the control group at Years = 0 with a baseline age of 0. This number does not mean much by itself, because no one in the study is 0 years old.
+
+The Years coefficient is 0.14. This means that in the control group, reasoning scores go up by about 0.14 points each year, holding age and gender constant. This is not significant (p = 0.09), so the control group's scores stay about the same over time. I was surprised by this, because I expected scores to go down as people get older. One reason could be that less healthy people dropped out, so the people left at later years were healthier. Another reason could be that people got better at the test because they took it many times.
+
+The reasoning training coefficient is 4.09. This means that at Years = 0, the reasoning group scored about 4 points higher than the control group, holding age and gender constant. This is very significant (p < 0.001). Since people were randomly put into groups, this gap most likely comes from the training.
+
+The interaction between Years and reasoning training is -0.11. This means the reasoning group's scores change 0.11 points per year less than the control group's. This difference is not significant (p = 0.34), so I don't have evidence that reasoning training changes how fast scores change over time. But the gap does not go away. After 10 years, the reasoning group is still about 3 points higher than the control group. The speed group was the only group with a significant interaction (-0.27, p = 0.017), which means its scores went down a little each year compared to the control group.
+
+Baseline age has a strong effect. Each extra year of age at the start means about 0.72 points lower in reasoning, holding the other variables constant (p < 0.001). For example, someone who started at age 80 would score about 7 points lower than someone who started at age 70. Women scored about 1.4 points lower than men (p < 0.001).
+
+Therefore, back to my research question. Reasoning training gave people higher reasoning scores, and this lasted for 10 years. But the training did not change how fast scores changed over time.
+
+This model has some problems. The R-squared is only 0.11, so the model explains only a small part of the differences in scores. Most of the differences come from differences between people, as Graph 1 showed. Also, lm assumes every observation is independent, but each person was measured many times, so their scores are related. This means the standard errors and p-values are probably too small.
+
+
+
+## References {-}
+::: {#refs}
+:::
+## Done! {-}
+
+- Render your homework.
+- Make sure the html file looks like you want it.
+- Submit your assignment as instructed.
+
+
