@@ -115,7 +115,7 @@ ANSWER:
 
 -Both models show that participants who were older at baseline had lower average memory scores. The baseline age coefficient ranges from about −1.1 to −1.2 across the two models, meaning that each additional year of baseline age is associated with a 1.1- to 1.2-point lower average memory score, when holding treatment group and follow-up year constant.
 -After accounting for baseline age, both models show that the memory training group had greater increases from baseline at years 2 and 3 and smaller declines at year 5 than the control group. For example, in the exchangeable model, the control group’s estimated average score at year 5 is 8.55 points below baseline, while the memory training group’s score is 4.66 points below its own baseline. But by year 10, the interaction coefficients are close to zero in both models, suggesting that the memory training group no longer shows a noticeably smaller decline from baseline than the control group.
--
+-The exchangeable model shows a within-participant correlation of about 0.78, suggesting that the memory scores from the same person are strongly correlated after accounting for the predictors. Its Model SE and Robust SE are generally closer than those in the independence model. Although the two models give similar results about baseline age and the training-related differences in change, the year 5 and year 10 coefficients differ more obviously. The year 5 coefficient is −5.04 in the independence model whereas −8.55 in the exchangeable model, and the year 10 coefficient is respectively −9.92 and −16.06. This shows that the choice of working correlation structure can affect both the estimates and their standard errors.
 
 
 ## Inference {-}
