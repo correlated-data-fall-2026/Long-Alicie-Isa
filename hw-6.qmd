@@ -151,7 +151,11 @@ With mixed effects, the `lmer()` function provides z statistics (labeled as `t-v
 
 ANSWER:
 
-
+Using the Robust SEs and a 0.05 cutoff, both models mostly agree, so the numbers below are from the exchangeable model.
+ - The baseline age coefficient is not zero (-1.21, p < 0.001).
+ - The treatment group coefficient could be zero (0.77, p = 0.36), so the two groups started out similar.
+ - Most of the follow-up year coefficients are not zero. Year 2 is the exception (0.40, p = 0.41).
+ - The interaction coefficients are not zero from 0.25 to 5 years (2.66 to 3.89, all p < 0.001), but the year 10 interaction could be zero (0.15, p = 0.90).
 
 
 ### Diagnostics {-}
@@ -160,32 +164,34 @@ For any model with a quantitative outcome, we should check to see if the residua
 
 6. Create a residual plot for your best model so far, plotting the residuals on the y-axis against a quantitative x-variable. Comment on the residual plot. See some example code below. 
 
-ANSWER:
+ANSWER:We plotted the residuals from the exchangeable model against baseline age. The smooth line stays close to zero for most ages, so there isn't a strong pattern and the linear baseline age term seems reasonable. The line drops below zero after about age 88, but there are only a few participants at those ages.
 
 ```{r}
 # Residuals = Obs - Predicted
+data <- memory_data %>% mutate(y = Memory)
 
 data %>% 
-  mutate(Pred = predict(mod, newdata = .)) %>% #replace mod with your chosen model
+  mutate(Pred = predict(gee_mod2)) %>%  #replace mod with your chosen model
   mutate(Resid = y - Pred) %>% #replace y with your outcome
-  ggplot(aes(x = Pred, y = Resid)) +  # you can replace Pred with a quantitative x
+  ggplot(aes(x = AgeAtBaseline, y = Resid)) +   # you can replace Pred with a quantitative x
   geom_point(alpha = .2) + 
   geom_hline(yintercept = 0) + 
   geom_smooth(se = FALSE) + 
   theme_classic()
 
-
-
 ```
 
 7. Considering all of the choices you need to make, make an argument for one final model using a variety of tools in 3-5 sentences. 
 
-ANSWER:
+ANSWER:  
+We picked the exchangeable model (Model 2) as our final model. Memory scores from the same person are strongly correlated (about 0.78), so the independence assumption doesn't really make sense. The Model SEs and Robust SEs are also closer in the exchangeable model (0.067 vs. 0.068 for baseline age, compared to 0.035 vs. 0.070 in the independence model). The residual plot doesn't show a strong pattern for most ages either. The Model SEs are still a little too small at years 5 and 10, so we use the Robust SEs for our conclusions.
 
 
 8. Using that final model, what do you conclude about your original research question about brain training among the elderly?
 
 ANSWER:
+After accounting for baseline age, memory scores did change differently between the two groups. From 0.25 to 5 years, the memory training group did about 3 points better than the control group compared to their own baseline. But by year 10 the difference was basically gone (0.15, p = 0.90). So memory training seems to slow memory decline for about 5 years, but it doesn't stop it, and the benefit doesn't seem to last 10 years. We're also less sure about year 10 because far fewer people were still in the study by then.
+
 ## Done! {-}
 
 - Render your homework.
