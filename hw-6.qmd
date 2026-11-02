@@ -114,7 +114,7 @@ summary(gee_mod2)
 ANSWER:
 
 -Both models show that participants who were older at baseline had lower average memory scores. The baseline age coefficient ranges from about −1.1 to −1.2 across the two models, meaning that each additional year of baseline age is associated with a 1.1- to 1.2-point lower average memory score, when holding treatment group and follow-up year constant.
--
+-After accounting for baseline age, both models show that the memory training group had greater increases from baseline at years 2 and 3 and smaller declines at year 5 than the control group. For example, in the exchangeable model, the control group’s estimated average score at year 5 is 8.55 points below baseline, while the memory training group’s score is 4.66 points below its own baseline. But by year 10, the interaction coefficients are close to zero in both models, suggesting that the memory training group no longer shows a noticeably smaller decline from baseline than the control group.
 -
 
 
