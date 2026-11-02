@@ -101,7 +101,10 @@ summary(gee_mod1)
 - Model 2:
 
 ```{r}
+gee_mod2 <- memory_data %>%
+  geem(Memory ~ factor(Years) * INTGRP + AgeAtBaseline, data = ., id = AID, corstr = "exchangeable")
 
+summary(gee_mod2)
 ```
 
 
