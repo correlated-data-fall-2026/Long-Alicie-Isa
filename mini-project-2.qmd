@@ -41,6 +41,18 @@ Describe model selection process and criteria used to evaluate models.
 ```{r results = "hide"}
 #read in data
 #clean data, as needed
+source("cleaning_active.R")
+library(tidyverse)
+library(tidyr)
+library(geeM)
+
+memory_data <- activeLong %>%
+  filter(INTGRP %in% c("Memory Training", "Control")) %>%
+  droplevels() %>%
+  mutate(INTGRP = relevel(INTGRP, ref = "Control")) %>%
+  drop_na(Memory, Years, INTGRP, AgeAtBaseline) %>%
+  arrange(AID, Years)
+```
 ```
 
 ## Results
@@ -52,11 +64,6 @@ Talk about the results, but don't tie it to your main question/topic (yet!).
 ```{r results = "hide", echo = FALSE}
 #echo = FALSE forces it to not show the code
 #results = "hide" hides the output but shows the code
-
-
-
-
-
 ```
 
 ```{r echo = FALSE}
