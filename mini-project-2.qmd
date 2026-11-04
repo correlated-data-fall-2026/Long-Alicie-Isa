@@ -52,7 +52,12 @@ memory_data <- activeLong %>%
   mutate(INTGRP = relevel(INTGRP, ref = "Control")) %>%
   drop_na(Memory, Years, INTGRP, AgeAtBaseline) %>%
   arrange(AID, Years)
-```
+
+booster_data <- memory_data %>%
+  filter(INTGRP == "Memory Training") %>%
+  droplevels() %>%
+  mutate(BOOSTER = factor(BOOSTER)) %>%
+  drop_na(BOOSTER)
 ```
 
 ## Results
@@ -64,6 +69,7 @@ Talk about the results, but don't tie it to your main question/topic (yet!).
 ```{r results = "hide", echo = FALSE}
 #echo = FALSE forces it to not show the code
 #results = "hide" hides the output but shows the code
+
 ```
 
 ```{r echo = FALSE}
