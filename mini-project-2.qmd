@@ -21,19 +21,22 @@ knitr::opts_chunk$set(echo = FALSE, message=FALSE, warnings=FALSE)
 
 ## Introduction
 
-Here is your introduction to the topic. You should cite important and relevant work [@heggeseth_impact_2013].
+Here is your introduction to the topic. You should cite important and relevant work [@heggeseth_impact_2013]. 
+As people age, memory loss can make everyday tasks harder, so it is important to understand whether memory training provides lasting benefits. One study found that older people who received training over six years had better long-term everyday memory outcomes than those who received short-term intensive training [@requena2016six]. However, additional training does not always produce noticeable benefits. In another study, improvements in some memory tasks following strategy-based memory training lasted up to eleven months, but booster sessions did not clearly improve the maintenance of those gains [@borella2023effects]. These findings suggest that both the duration of training benefits and the value of additional sessions deserve attention.
+
+The ACTIVE study provides an opportunity to examine these questions over a longer period. It randomly assigned older adults to memory training, reasoning training, speed-of-processing training, or a no-contact control group and followed their cognitive performance over ten years. Some participants were also selected for booster training at 11 and 35 months after initial training [@rebok2014ten]. So our research question is, how do memory scores change over ten years in the memory training and control groups, and is booster training associated with smaller long-term declines in memory scores within the memory training group, after accounting for baseline age? This could help us understand whether the benefits of memory training persist as participants age and whether booster training helps maintain those benefits.
 
 ## Data
 
-Describe the data source and the data itself. 
+Describe the data source and the data itself.
 
 Describe the variables of interest and how they were measured.
 
 ## Methods
 
-Describe and justify the statistical methods used in enough detail that the analysis could be replicated, citing original authors for methods and R packages used. Cite statistical methods such as the EM Algorithm [@dempster_maximum_1977]. 
+Describe and justify the statistical methods used in enough detail that the analysis could be replicated, citing original authors for methods and R packages used. Cite statistical methods such as the EM Algorithm [@dempster_maximum_1977].
 
-Describe model selection process and criteria used to evaluate models. 
+Describe model selection process and criteria used to evaluate models.
 
 ```{r results = "hide"}
 #read in data
@@ -66,26 +69,22 @@ library(kableExtra)
 #  kable_styling()
 ```
 
-
 Stick to facts and observations.
 
 ## Conclusions
 
-Connect and hypothesize about results in larger context. 
+Connect and hypothesize about results in larger context.
 
 Talk about what you learn about the topic from your results.
 
 Discuss limitations of methods.
 
-
 ## Acknowledgements
 
-Thank individuals who helped make this work possible. 
+Thank individuals who helped make this work possible.
 
-To do the references, build a Bibtex file (.bib) by creating a New File (text file) in RStudio and Save as Library.bib. It is the easiest to use Google Scholar to get the entries for the Bibtex file. Look for quotes and press Bibtex. Copy and paste into a .bib file. Check out Bibliographic Information at https://en.wikipedia.org/wiki/BibTeX. 
+To do the references, build a Bibtex file (.bib) by creating a New File (text file) in RStudio and Save as Library.bib. It is the easiest to use Google Scholar to get the entries for the Bibtex file. Look for quotes and press Bibtex. Copy and paste into a .bib file. Check out Bibliographic Information at https://en.wikipedia.org/wiki/BibTeX.
 
 Check out how to include citations into Quarto files at this site: https://quarto.org/docs/authoring/citations.html
-
-
 
 ## References
