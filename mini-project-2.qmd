@@ -31,6 +31,26 @@ Describe the data source and the data itself.
 
 Describe the variables of interest and how they were measured.
 
+```{r}
+memory_data <- activeLong %>%
+  filter(INTGRP %in% c("Memory Training", "Control"))
+
+memory_data %>%
+  group_by(INTGRP, Years) %>%
+  summarize(AverageMemory = mean(Memory, na.rm = TRUE)) %>%
+  ggplot(aes(x = Years, y = AverageMemory, color = INTGRP)) +
+  geom_point() +
+  geom_line() +
+  labs(
+    title = "Average Memory Scores Over Time",
+    x = "Follow Up Years",
+    y = "Average Memory Score",
+    color = "Treatment Group"
+  ) +
+  theme_classic()
+```
+
+
 ## Methods
 
 Describe and justify the statistical methods used in enough detail that the analysis could be replicated, citing original authors for methods and R packages used. Cite statistical methods such as the EM Algorithm [@dempster_maximum_1977].
@@ -88,7 +108,7 @@ Talk about the results, but don't tie it to your main question/topic (yet!).
 memory_data %>%
   filter(Years == 0) %>%
   ggplot(aes(x = AgeAtBaseline, y = Memory)) +
-  geom_point(alpha = 0.5) +
+  geom_point(alpha = 0.3) +
   geom_smooth(method = "lm", se = FALSE, color = "blue") +
   geom_smooth(method = "loess", se = FALSE, color = "red") +
   labs(
@@ -98,6 +118,35 @@ memory_data %>%
   ) +
   theme_classic()
 
+memory_data %>%
+  mutate(Pred = predict(gee_mod2),
+         Resid = Memory - Pred
+         ) %>%
+  ggplot(aes(x = Pred, y = Resid)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(se = FALSE, color = "purple") +
+  geom_hline(yintercept = 0) +
+  labs(
+    title = "Memory Training Model Residuals",
+    x = "Predicted Memory Score",
+    y = "Residual"
+  ) +
+  theme_classic()
+
+booster_data %>%
+  mutate(Pred = predict(gee_booster),
+         Resid = Memory - Pred
+         ) %>%
+  ggplot(aes(x = Pred, y = Resid)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(se = FALSE, color = "purple") +
+  geom_hline(yintercept = 0) +
+  labs(
+    title = "Booster Training Model Residuals",
+    x = "Predicted Memory Score",
+    y = "Residual"
+  ) +
+  theme_classic()
 ```
 
 
