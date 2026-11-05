@@ -85,8 +85,21 @@ Talk about the results, but don't tie it to your main question/topic (yet!).
 ```{r results = "hide", echo = FALSE}
 #echo = FALSE forces it to not show the code
 #results = "hide" hides the output but shows the code
+memory_data %>%
+  filter(Years == 0) %>%
+  ggplot(aes(x = AgeAtBaseline, y = Memory)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "lm", se = FALSE, color = "blue") +
+  geom_smooth(method = "loess", se = FALSE, color = "red") +
+  labs(
+    title = "Memory Scores At Baseline Age",
+    x = "Baseline Age",
+    y = "Baseline Memory Score"
+  ) +
+  theme_classic()
 
 ```
+
 
 ```{r echo = FALSE}
 library(kableExtra)
