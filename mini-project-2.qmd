@@ -168,7 +168,7 @@ Connect and hypothesize about results in larger context.
 
 Talk about what you learn about the topic from your results.
 
-Discuss limitations of methods.
+One limitation is that the booster variable indicates whether participants were invited to booster training, but does not tell us whether they actually attended. Therefore, the invited group in our analysis may include participants who did not attend. We cannot draw a conclusion about whether attending the booster sessions helped participants maintain their memory scores.
 
 ## Acknowledgements
 
