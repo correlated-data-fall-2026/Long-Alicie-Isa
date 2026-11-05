@@ -57,7 +57,7 @@ Describe and justify the statistical methods used in enough detail that the anal
 
 Describe model selection process and criteria used to evaluate models.
 
-
+We first plotted average memory scores over time for the memory training and control groups. The scores did not appear to change at a constant rate, so we treated follow-up year as a categorical variable. We therefore used generalized estimating equations (GEE) to compare average changes between groups. We fitted the models using geeM and excluded observations with missing values.
 
 
 
