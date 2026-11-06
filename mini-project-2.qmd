@@ -30,11 +30,69 @@ The ACTIVE study provides an opportunity to examine these questions over a longe
 Describe the data source and the data itself.
 
 Describe the variables of interest and how they were measured.
+```{r results = "hide"}
+#read in data
+#clean data, as needed
+source("cleaning_active.R")
+library(tidyverse)
+library(tidyr)
+library(geeM)
+
+memory_data <- activeLong %>%
+  filter(INTGRP %in% c("Memory Training", "Control")) %>%
+  droplevels() %>%
+  mutate(INTGRP = relevel(INTGRP, ref = "Control")) %>%
+  drop_na(Memory, Years, INTGRP, AgeAtBaseline) %>%
+  arrange(AID, Years)
+
+booster_data <- memory_data %>%
+  filter(INTGRP == "Memory Training") %>%
+  droplevels() %>%
+  mutate(BOOSTER = factor(BOOSTER)) %>%
+  drop_na(BOOSTER)
+
+memory_data <- memory_data %>%
+  mutate(Group = case_when(
+    INTGRP == "Control" ~ "Control",
+    INTGRP == "Memory Training" & BOOSTER == 0 ~ "Memory no booster",
+    INTGRP == "Memory Training" & BOOSTER == 1 ~ "Memory booster"
+  ))%>%
+  mutate(Group = relevel(factor(Group), ref = "Control"))
+
+gee_mod1 <- memory_data %>%
+  geem(Memory ~ factor(Years) * INTGRP + AgeAtBaseline, data = ., id = AID, corstr = "independence") 
+
+gee_mod2 <- memory_data %>%
+  geem(Memory ~ factor(Years) * INTGRP + AgeAtBaseline, data = ., id = AID, corstr = "exchangeable")
+
+gee_mod3 <- memory_data %>%
+  geem(Memory ~ factor(Years) * INTGRP + AgeAtBaseline, data = ., id = AID, corstr = "ar1")
+
+gee_booster <- booster_data %>%
+  geem(Memory ~ factor(Years) * BOOSTER + AgeAtBaseline, data = ., id = AID, corstr = "exchangeable")
+
+gee_final <- memory_data %>%
+  geem(Memory ~ factor(Years) * Group + AgeAtBaseline, data = ., id = AID, corstr = "exchangeable")
+
+memory_data2 <- memory_data %>%
+  mutate(Group = relevel(Group, ref = "Memory no booster"))
+
+gee_final2 <- memory_data2 %>%
+  geem(Memory ~ factor(Years) * Group + AgeAtBaseline, data = ., id = AID, corstr = "exchangeable")
+
+gee_age <- memory_data %>%
+  geem(Memory ~ factor(Years) * Group + factor(Years) * AgeAtBaseline, data = ., id = AID, corstr = "exchangeable")
+
+summary(gee_mod1)
+summary(gee_mod2)
+summary(gee_mod3)
+summary(gee_booster)
+summary(gee_final)
+summary(gee_final2)
+summary(gee_age)
+```
 
 ```{r}
-memory_data <- activeLong %>%
-  filter(INTGRP %in% c("Memory Training", "Control"))
-
 memory_data %>%
   group_by(INTGRP, Years) %>%
   summarize(AverageMemory = mean(Memory, na.rm = TRUE)) %>%
@@ -60,43 +118,6 @@ Describe model selection process and criteria used to evaluate models.
 We first plotted average memory scores over time for the memory training and control groups. The scores did not appear to change at a constant rate, so we treated follow-up year as a categorical variable. To decide how to include baseline age, we plotted baseline memory scores against baseline age and compared a linear regression line with a LOESS curve. The two fitting lines were similar across most of the age range, so we included baseline age as a linear term. We therefore used generalized estimating equations (GEE) because our main goal was to compare how average memory scores changed over time in the memory training and control groups. GEE allowed us to estimate these group-level changes while accounting for the correlation between repeated scores from the same participant.
 
 
-
-
-```{r results = "hide"}
-#read in data
-#clean data, as needed
-source("cleaning_active.R")
-library(tidyverse)
-library(tidyr)
-library(geeM)
-
-memory_data <- activeLong %>%
-  filter(INTGRP %in% c("Memory Training", "Control")) %>%
-  droplevels() %>%
-  mutate(INTGRP = relevel(INTGRP, ref = "Control")) %>%
-  drop_na(Memory, Years, INTGRP, AgeAtBaseline) %>%
-  arrange(AID, Years)
-
-booster_data <- memory_data %>%
-  filter(INTGRP == "Memory Training") %>%
-  droplevels() %>%
-  mutate(BOOSTER = factor(BOOSTER)) %>%
-  drop_na(BOOSTER)
-
-gee_mod1 <- memory_data %>%
-  geem(Memory ~ factor(Years) * INTGRP + AgeAtBaseline, data = ., id = AID, corstr = "independence") 
-
-gee_mod2 <- memory_data %>%
-  geem(Memory ~ factor(Years) * INTGRP + AgeAtBaseline, data = ., id = AID, corstr = "exchangeable")
-
-gee_booster <- booster_data %>%
-  geem(Memory ~ factor(Years) * BOOSTER + AgeAtBaseline, data = ., id = AID, corstr = "exchangeable")
-
-summary(gee_mod1)
-summary(gee_mod2)
-summary(gee_booster)
-```
-
 ## Results
 
 Tables, graphics, and statistics, Oh my!
@@ -120,7 +141,7 @@ memory_data %>%
   theme_classic()
 
 memory_data %>%
-  mutate(Pred = predict(gee_mod2),
+  mutate(Pred = predict(gee_age),
          Resid = Memory - Pred
          ) %>%
   ggplot(aes(x = Pred, y = Resid)) +
@@ -128,7 +149,7 @@ memory_data %>%
   geom_smooth(se = FALSE, color = "purple") +
   geom_hline(yintercept = 0) +
   labs(
-    title = "Memory Training Model Residuals",
+    title = "Age Interaction Model Residuals",
     x = "Predicted Memory Score",
     y = "Residual"
   ) +
@@ -150,16 +171,6 @@ booster_data %>%
   theme_classic()
 ```
 
-
-```{r echo = FALSE}
-library(kableExtra)
-#https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html
-# Can show a table of output saved as a data frame
-
-#df %>%
-#  kbl() %>%
-#  kable_styling()
-```
 
 Stick to facts and observations.
 
