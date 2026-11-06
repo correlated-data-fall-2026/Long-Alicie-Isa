@@ -97,11 +97,11 @@ Residuals from our initial model showed a slight arch across predicted memory sc
 
 We analyzed 6,547 memory measurements from 1,391 participants. At baseline, 622 were in the control group, 329 in memory training with a booster invitation, and 291 without one. Scores from the same participant were strongly correlated (about 0.78). In all groups, average scores stayed similar or rose through year 3, then declined, ending well below baseline by year 10.
 
-In the short term, both training groups had a more favorable change from baseline than the control group at every follow-up from years 0.25 to 5. For the booster-invited group, the difference was largest at year 5, when its change was 4.20 points more favorable than the control group's (95% CI 2.31 to 6.09, p \< 0.001). By year 10, there was no evidence of a difference from the control group for either the booster-invited group (−0.10 points, 95% CI −2.86 to 2.66, p = 0.94) or the no-booster group.
+In the short term, both training groups had a more favorable change from baseline than the control group at every follow-up from years 0.25 to 5. For the booster-invited group, the difference was largest at year 5, when its average memory score declined 4.20 points less from baseline than the control group's (95% CI 2.31 to 6.09, p \< 0.001). By year 10, there was no evidence of a difference from the control group for either the booster-invited group (−0.10 points, 95% CI −2.86 to 2.66, p = 0.94) or the no-booster group.
 
-We found no evidence of a difference between the two training groups at any follow-up. At year 5, the booster-invited group's change was 1.13 points more favorable than the no-booster group's (95% CI −1.11 to 3.37, p = 0.32). At year 0.25, before booster sessions began, the two groups were also similar.
+We found no statistically significant difference between the two training groups at any follow-up. At year 5, the booster-invited group's average memory score declined 1.13 points less from baseline than the no-booster group's (95% CI −1.11 to 3.37, p = 0.32). At year 0.25, before booster sessions began, the two groups were also similar.
 
-Older participants had lower baseline scores and declined faster: those 10 years older scored about 10 points lower at baseline, and this gap widened by about 8 points by year 10. Residuals from the final model were mostly centered around zero, with only a slight trend at the extremes, where few points fall (@fig-resid).
+Older participants had lower baseline memory scores and showed greater declines over ten years. Participants who were 10 years older at baseline scored about 10 points lower on average at baseline, and this gap widened by about 8 points by year 10. Residuals from the final model were mostly centered around zero, with only a slight trend at the two extremes of the fitted values, where there were few observations (@fig-resid).
 
 ```{r results = "hide"}
 gee_mod1 <- memory_data %>%
@@ -137,7 +137,6 @@ summary(gee_final2)
 summary(gee_age)
 ```
 
-
 ```{r}
 #| label: fig-resid
 #| fig-cap: "Residuals from the final model plotted against predicted memory scores."
@@ -161,7 +160,7 @@ memory_data %>%
 
 We found that both memory training groups had a more favorable change in memory scores than the control group within about five years. However, by year 10, we found no evidence that this advantage remained. We also found no evidence of a difference between the two memory training groups. Older participants declined faster over time.
 
-These results are similar to earlier findings. Like @borella2023effects, we found no clear benefit of additional booster training, although we could only compare participants by booster invitation. Like the ten-year ACTIVE results, the advantage of memory training also became less clear over time [@rebok2014ten]. One possible explanation is that booster training at two time points may not be enough to maintain training benefits, and longer or more frequent training may be needed, as suggested by @requena2016six.
+Our results generally align with earlier findings. In our analysis of the ACTIVE data, the advantage of memory training was less clear by year 10, consistent with the trial’s published ten-year findings [@rebok2014ten]. Like @borella2023effects, we found no clear booster benefit, although our analysis compared participants by booster invitation status rather than actual attendance. One possible explanation is that offering booster sessions at two time points may not be enough to maintain training benefits. The findings from @requena2016six suggest that training over a longer period may help maintain those benefits.
 
 One limitation is that we only know whether participants were invited to booster training, not whether they attended, so we cannot conclude whether attending the booster sessions helped maintain memory scores. Another limitation is that many participants left the study by year 10, and those who remained may have been healthier, so our long-term results are less certain. Also, our residuals still showed a slight trend at the extremes, and few participants were older than 85, so our model may be less accurate for the oldest participants.
 
