@@ -30,6 +30,7 @@ The ACTIVE study provides an opportunity to examine these questions over a longe
 Describe the data source and the data itself.
 
 Describe the variables of interest and how they were measured.
+
 ```{r results = "hide"}
 #read in data
 #clean data, as needed
@@ -78,7 +79,7 @@ memory_data2 <- memory_data %>%
   mutate(Group = relevel(Group, ref = "Memory no booster"))
 
 gee_final2 <- memory_data2 %>%
-  geem(Memory ~ factor(Years) * Group + AgeAtBaseline, data = ., id = AID, corstr = "exchangeable")
+  geem(Memory ~ factor(Years) * Group + factor(Years) * AgeAtBaseline, data = ., id = AID, corstr = "exchangeable")
 
 gee_age <- memory_data %>%
   geem(Memory ~ factor(Years) * Group + factor(Years) * AgeAtBaseline, data = ., id = AID, corstr = "exchangeable")
@@ -94,9 +95,9 @@ summary(gee_age)
 
 ```{r}
 memory_data %>%
-  group_by(INTGRP, Years) %>%
+  group_by(Group, Years) %>%
   summarize(AverageMemory = mean(Memory, na.rm = TRUE)) %>%
-  ggplot(aes(x = Years, y = AverageMemory, color = INTGRP)) +
+  ggplot(aes(x = Years, y = AverageMemory, color = Group)) +
   geom_point() +
   geom_line() +
   labs(
@@ -153,21 +154,6 @@ memory_data %>%
   geom_hline(yintercept = 0) +
   labs(
     title = "Age Interaction Model Residuals",
-    x = "Predicted Memory Score",
-    y = "Residual"
-  ) +
-  theme_classic()
-
-booster_data %>%
-  mutate(Pred = predict(gee_booster),
-         Resid = Memory - Pred
-         ) %>%
-  ggplot(aes(x = Pred, y = Resid)) +
-  geom_point(alpha = 0.3) +
-  geom_smooth(se = FALSE, color = "purple") +
-  geom_hline(yintercept = 0) +
-  labs(
-    title = "Booster Training Model Residuals",
     x = "Predicted Memory Score",
     y = "Residual"
   ) +
