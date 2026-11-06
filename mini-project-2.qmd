@@ -1,6 +1,6 @@
 ---
-title: "Informative Title"
-author: "Alicie Isa"
+title: "Do the Benefits of Memory Training Last?"
+author: "Alicie & Isa"
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 format: 
   html:
@@ -12,7 +12,7 @@ format:
     toc-depth: 2
     embed-resources: true
 bibliography: Library.bib
-abstract: "Here is  a brief summary of why this paper is important and what are the main conclusions."
+abstract: "Memory decline can make daily life harder for older adults, but it is unclear whether the benefits of memory training last. Using ten years of data from the ACTIVE study, we used generalized estimating equations to compare changes in memory scores between control participants and memory training participants who were or were not invited to booster training, accounting for baseline age. Both training groups had more favorable changes than the control group within about five years, but we found no evidence of a difference by year 10 or between the two training groups."
 ---
 
 ```{r setup, include=FALSE}
@@ -23,13 +23,17 @@ knitr::opts_chunk$set(echo = FALSE, message=FALSE, warnings=FALSE)
 
 As people age, memory loss can make everyday tasks harder, so it is important to understand whether memory training provides lasting benefits. One study found that older people who received training over six years had better long-term everyday memory outcomes than those who received short-term intensive training [@requena2016six]. However, additional training does not always produce noticeable benefits. In another study, improvements in some memory tasks following strategy-based memory training lasted up to eleven months, but booster sessions did not clearly improve the maintenance of those gains [@borella2023effects]. These findings suggest that both the duration of training benefits and the value of additional sessions deserve attention.
 
-The ACTIVE study provides an opportunity to examine these questions over a longer period. It randomly assigned older adults to memory training, reasoning training, speed-of-processing training, or a no-contact control group and followed their cognitive performance over ten years. Some participants were also selected for booster training at 11 and 35 months after initial training [@rebok2014ten]. So our research question is, how do memory scores change over ten years in the memory training and control groups, and is booster training associated with smaller long-term declines in memory scores within the memory training group, after accounting for baseline age? This could help us understand whether the benefits of memory training persist as participants age and whether booster training helps maintain those benefits.
+The ACTIVE study provides an opportunity to examine these questions over a longer period. It randomly assigned older adults to memory training, reasoning training, speed-of-processing training, or a no-contact control group and followed their cognitive performance over ten years. Some participants were also invited to booster training at 11 and 35 months after initial training [@rebok2014ten]. Our first research question is, after accounting for baseline age, how do memory scores change from baseline in the memory training and control groups in the short term (within about five years) and the long term (ten years)? Our second question is, does this change differ between memory training participants who were and were not invited to booster training? This could help us understand whether the benefits of memory training persist as participants age and whether booster training helps maintain those benefits.
 
 ## Data
 
-Describe the data source and the data itself.
+We used data from the Advanced Cognitive Training for Independent and Vital Elderly (ACTIVE) study, a randomized controlled trial conducted at multiple sites in the United States among independently living adults aged 65 and older [@rebok2014ten]. The public dataset includes 2,802 participants randomly assigned to four groups. We used only the memory training and control groups.
 
-Describe the variables of interest and how they were measured.
+Memory was measured as the total score on three tests: the Rey Auditory-Verbal Learning Test, the Hopkins Verbal Learning Test, and the Rivermead Behavioral Paragraph Recall test. Higher scores indicate better memory. Participants were assessed seven times: at baseline, after training (about 0.25 years), and at years 1, 2, 3, 5, and 10. We divided participants into three groups: the control group, memory training participants invited to booster sessions at 11 and 35 months, and memory training participants who were not invited. Baseline age ranged from about 65 to 93 years.
+
+We excluded observations with missing memory scores or baseline age, leaving 1,391 participants and 6,547 measurements. The number of participants with a memory score declined steadily over follow-up, from 1,242 at baseline to 422 at year 10.
+
+Unadjusted average memory scores stayed similar or rose in all three groups through year 3, then declined (@fig-means). Both training groups had higher averages than the control group, with the largest gaps from years 0.25 to 5, and the booster-invited group was already about 2 points higher at baseline. By year 10, the three groups were similar.
 
 ```{r results = "hide"}
 #read in data
@@ -112,38 +116,28 @@ memory_data %>%
 
 ## Methods
 
-Describe and justify the statistical methods used in enough detail that the analysis could be replicated, citing original authors for methods and R packages used. Cite statistical methods such as the EM Algorithm [@dempster_maximum_1977].
+We used generalized estimating equations (GEE) [@liang1986longitudinal] in R [@rcore] with geeM [@mcdaniel2013fast] to account for correlation within participants, whose scores tend to be high or low together.We treated follow-up year as categorical because average scores did not change at a constant rate, giving each year its own mean but no single rate of change. We included baseline age as a linear term because the linear and LOESS fits at baseline were similar, except above about age 85.
 
-Describe model selection process and criteria used to evaluate models.
+We compared independence, exchangeable, and AR1 working correlation structures, which assume no correlation, equal correlation between any two scores, and weaker correlation for scores farther apart. We chose exchangeable, which implies the same correlation pattern as a participant random intercept, because scores stayed correlated even years apart, whereas AR1 correlation dropped too quickly and fit the uneven follow-up gaps poorly. Its model-based and robust standard errors were also closer at most time points than under the other structures. We used robust standard errors, which remain valid even if the correlation structure is not exactly right.
 
-We first plotted average memory scores over time for the memory training and control groups. The scores did not appear to change at a constant rate, so we treated follow-up year as a categorical variable. To decide how to include baseline age, we plotted baseline memory scores against baseline age and compared a linear regression line with a LOESS curve. The two fitting lines were similar across most of the age range, so we included baseline age as a linear term. We therefore used generalized estimating equations (GEE) because our main goal was to compare how average memory scores changed over time in the memory training and control groups. GEE allowed us to estimate these group-level changes while accounting for the correlation between repeated scores from the same participant. We fitted the two models in R using geeM and excluded observations with missing memory scores or required predictors.
+Our main model included an interaction between follow-up year and group (control, memory training not invited to boosters, and memory training invited to boosters). We compared each training group's change from baseline with the control group's in the short term (years 0.25–5) and long term (year 10). We also refitted the model with the no-booster group as the reference to compare the two training groups.
 
-In the main model, we included an interaction between treatment group and follow-up year to compare how much memory scores changed from baseline in each group. Our main comparison was whether the change from baseline to year 10 differed between the memory training and control groups. We then fitted a separate model within the memory training group, using an interaction between booster invitation status and follow-up year to compare the ten-year change between participants who were invited and those who were not. Both models accounted for baseline age.
+Residuals from our initial model showed a slight arch across predicted memory scores. We therefore added an interaction between follow-up year and baseline age, allowing the relationship between baseline age and memory scores to differ over time. After adding this interaction, the arch mostly disappeared and our conclusions about memory training did not change.
 
-To compare how memory scores changed over time in the memory training and control groups, we fitted GEE models with two working correlation structures. The independence structure assumes no correlation between repeated scores from the same participant, while the exchangeable structure assumes the same correlation between any two scores from that participant. We chose the exchangeable structure because it allows repeated scores from the same person to be correlated, and the model-based and robust standard errors were generally closer to each other under this structure. We also used the exchangeable structure for the booster invitation analysis. In both analyses, we used robust standard errors to account for within-participant correlation when assessing uncertainty. We also plotted residuals against fitted memory scores to see whether any patterns remained. The patterns we observed led us to reconsider...
 
 ## Results
 
-Tables, graphics, and statistics, Oh my!
+We analyzed 6,547 memory measurements from 1,391 participants. At baseline, 622 were in the control group, 329 in memory training with a booster invitation, and 291 without one. Scores from the same participant were strongly correlated (about 0.78). In all groups, average scores stayed similar or rose through year 3, then declined, ending well below baseline by year 10.
 
-Talk about the results, but don't tie it to your main question/topic (yet!).
+In the short term, both training groups had a more favorable change from baseline than the control group at every follow-up from years 0.25 to 5. For the booster-invited group, the difference was largest at year 5, when its change was 4.20 points more favorable than the control group's (95% CI 2.31 to 6.09, p < 0.001). By year 10, there was no evidence of a difference from the control group for either the booster-invited group (−0.10 points, 95% CI −2.86 to 2.66, p = 0.94) or the no-booster group.
 
-```{r results = "hide", echo = FALSE}
-#echo = FALSE forces it to not show the code
-#results = "hide" hides the output but shows the code
-memory_data %>%
-  filter(Years == 0) %>%
-  ggplot(aes(x = AgeAtBaseline, y = Memory)) +
-  geom_point(alpha = 0.3) +
-  geom_smooth(method = "lm", se = FALSE, color = "blue") +
-  geom_smooth(method = "loess", se = FALSE, color = "red") +
-  labs(
-    title = "Memory Scores At Baseline Age",
-    x = "Baseline Age",
-    y = "Baseline Memory Score"
-  ) +
-  theme_classic()
+We found no evidence of a difference between the two training groups at any follow-up. At year 5, the booster-invited group's change was 1.13 points more favorable than the no-booster group's (95% CI −1.11 to 3.37, p = 0.32). At year 0.25, before booster sessions began, the two groups were also similar.
 
+Older participants had lower baseline scores and declined faster: those 10 years older scored about 10 points lower at baseline, and this gap widened by about 8 points by year 10. Residuals from the final model were mostly centered around zero, with only a slight trend at the extremes, where few points fall (@fig-resid).
+
+```{r}
+#| label: fig-resid
+#| fig-cap: "Residuals from the final model plotted against predicted memory scores."
 memory_data %>%
   mutate(Pred = predict(gee_age),
          Resid = Memory - Pred
@@ -153,27 +147,26 @@ memory_data %>%
   geom_smooth(se = FALSE, color = "purple") +
   geom_hline(yintercept = 0) +
   labs(
-    title = "Age Interaction Model Residuals",
+    title = "Final Model Residuals",
     x = "Predicted Memory Score",
     y = "Residual"
   ) +
   theme_classic()
 ```
 
-
-Stick to facts and observations.
-
 ## Conclusions
 
-Connect and hypothesize about results in larger context.
+We found that both memory training groups had a more favorable change in memory scores than the control group within about five years. However, by year 10, we found no evidence that this advantage remained. We also found no evidence of a difference between the two memory training groups. Older participants declined faster over time.
 
-Talk about what you learn about the topic from your results.
+These results are similar to earlier findings. Like @borella2023effects, we found no clear benefit of additional booster training, although we could only compare participants by booster invitation. Like the ten-year ACTIVE results, the advantage of memory training also became less clear over time [@rebok2014ten]. One possible explanation is that booster training at two time points may not be enough to maintain training benefits, and longer or more frequent training may be needed, as suggested by @requena2016six.
 
-One limitation is that the booster variable indicates whether participants were invited to booster training, but does not tell us whether they actually attended. Therefore, the invited group in our analysis may include participants who did not attend. We cannot draw a conclusion about whether attending the booster sessions helped participants maintain their memory scores.
+One limitation is that we only know whether participants were invited to booster training, not whether they attended, so we cannot conclude whether attending the booster sessions helped maintain memory scores. Another limitation is that many participants left the study by year 10, and those who remained may have been healthier, so our long-term results are less certain. Also, our residuals still showed a slight trend at the extremes, and few participants were older than 85, so our model may be less accurate for the oldest participants.
+
+Overall, memory training may help older adults for several years, but maintaining those benefits may require longer or more frequent training than booster training at two time points, which future studies could test.
 
 ## Acknowledgements
 
-Thank individuals who helped make this work possible.
+We thank Professor Brianna Heggeseth for her guidance and feedback throughout this project. We also thank the ACTIVE study investigators and participants for making these data publicly available.
 
 To do the references, build a Bibtex file (.bib) by creating a New File (text file) in RStudio and Save as Library.bib. It is the easiest to use Google Scholar to get the entries for the Bibtex file. Look for quotes and press Bibtex. Copy and paste into a .bib file. Check out Bibliographic Information at https://en.wikipedia.org/wiki/BibTeX.
 
