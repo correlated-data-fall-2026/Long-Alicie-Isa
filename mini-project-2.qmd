@@ -113,10 +113,9 @@ memory_data %>%
   theme_classic()
 ```
 
-
 ## Methods
 
-We used generalized estimating equations (GEE) [@liang1986longitudinal] in R [@rcore] with geeM [@mcdaniel2013fast] to account for correlation within participants, whose scores tend to be high or low together.We treated follow-up year as categorical because average scores did not change at a constant rate, giving each year its own mean but no single rate of change. We included baseline age as a linear term because the linear and LOESS fits at baseline were similar, except above about age 85.
+We used generalized estimating equations (GEE) [@liang1986longitudinal] in R [@rcore] with geeM [@mcdaniel2013fast] to account for correlation within participants, whose scores tend to be high or low together. We treated follow-up year as categorical because average scores did not change at a constant rate, giving each year its own mean but no single rate of change. We included baseline age as a linear term because the linear and LOESS fits at baseline were similar, except above about age 85.
 
 We compared independence, exchangeable, and AR1 working correlation structures, which assume no correlation, equal correlation between any two scores, and weaker correlation for scores farther apart. We chose exchangeable, which implies the same correlation pattern as a participant random intercept, because scores stayed correlated even years apart, whereas AR1 correlation dropped too quickly and fit the uneven follow-up gaps poorly. Its model-based and robust standard errors were also closer at most time points than under the other structures. We used robust standard errors, which remain valid even if the correlation structure is not exactly right.
 
@@ -124,12 +123,11 @@ Our main model included an interaction between follow-up year and group (control
 
 Residuals from our initial model showed a slight arch across predicted memory scores. We therefore added an interaction between follow-up year and baseline age, allowing the relationship between baseline age and memory scores to differ over time. After adding this interaction, the arch mostly disappeared and our conclusions about memory training did not change.
 
-
 ## Results
 
 We analyzed 6,547 memory measurements from 1,391 participants. At baseline, 622 were in the control group, 329 in memory training with a booster invitation, and 291 without one. Scores from the same participant were strongly correlated (about 0.78). In all groups, average scores stayed similar or rose through year 3, then declined, ending well below baseline by year 10.
 
-In the short term, both training groups had a more favorable change from baseline than the control group at every follow-up from years 0.25 to 5. For the booster-invited group, the difference was largest at year 5, when its change was 4.20 points more favorable than the control group's (95% CI 2.31 to 6.09, p < 0.001). By year 10, there was no evidence of a difference from the control group for either the booster-invited group (−0.10 points, 95% CI −2.86 to 2.66, p = 0.94) or the no-booster group.
+In the short term, both training groups had a more favorable change from baseline than the control group at every follow-up from years 0.25 to 5. For the booster-invited group, the difference was largest at year 5, when its change was 4.20 points more favorable than the control group's (95% CI 2.31 to 6.09, p \< 0.001). By year 10, there was no evidence of a difference from the control group for either the booster-invited group (−0.10 points, 95% CI −2.86 to 2.66, p = 0.94) or the no-booster group.
 
 We found no evidence of a difference between the two training groups at any follow-up. At year 5, the booster-invited group's change was 1.13 points more favorable than the no-booster group's (95% CI −1.11 to 3.37, p = 0.32). At year 0.25, before booster sessions began, the two groups were also similar.
 
@@ -167,9 +165,5 @@ Overall, memory training may help older adults for several years, but maintainin
 ## Acknowledgements
 
 We thank Professor Brianna Heggeseth for her guidance and feedback throughout this project. We also thank the ACTIVE study investigators and participants for making these data publicly available.
-
-To do the references, build a Bibtex file (.bib) by creating a New File (text file) in RStudio and Save as Library.bib. It is the easiest to use Google Scholar to get the entries for the Bibtex file. Look for quotes and press Bibtex. Copy and paste into a .bib file. Check out Bibliographic Information at https://en.wikipedia.org/wiki/BibTeX.
-
-Check out how to include citations into Quarto files at this site: https://quarto.org/docs/authoring/citations.html
 
 ## References
